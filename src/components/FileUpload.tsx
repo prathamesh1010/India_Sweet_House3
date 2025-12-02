@@ -17,8 +17,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, className 
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string>('');
 
-  // Backend API configuration
-  const BACKEND_URL = 'http://localhost:5000';
+  // Backend API configuration - use relative path for Vercel deployment
+  const BACKEND_URL = import.meta.env.VITE_API_URL || '/api';
 
   const processWithBackend = async (file: File) => {
     try {
