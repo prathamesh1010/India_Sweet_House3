@@ -30,8 +30,5 @@
   "framework": "vite",
   "installCommand": "npm install",
   "buildCommand": "npm run build",
-  "devCommand": "npm run dev:frontend",
-  "env": {
-    "PYTHON_VERSION": "3.11.0"
-  }
+  "devCommand": "npm run dev:frontend"
 }
