@@ -269,14 +269,11 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, className 
           Month: month || currentDate,
           'Item Name': 'Outlet Summary',
           'Store Name': outletName,
-          'Cluster Manager': outletManager,
+          'Outlet Manager': outletManager,
           'Sales Type': 'Summary Data',
           'Payment Type': 'N/A',
           'Total Sales': parseFloat(row[4]) || 0,
-          Qty: 1,
-          // Additional outlet-specific data
-          'Outlet Name': outletName,
-          'Outlet Manager': outletManager
+          Qty: 1
         };
         
         processedData.push(outletRecord);
