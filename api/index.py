@@ -677,6 +677,8 @@ def parseFloat(value):
 
 # Root and health check endpoint
 @app.route('/', methods=['GET'])
+@app.route('/api', methods=['GET'])
+@app.route('/api/', methods=['GET'])
 def root():
     return jsonify({
         "status": "healthy", 
@@ -690,10 +692,12 @@ def root():
     })
 
 @app.route('/health', methods=['GET'])
+@app.route('/api/health', methods=['GET'])
 def health_check():
     return jsonify({"status": "healthy", "message": "Backend API is running"})
 
 @app.route('/process-file', methods=['POST'])
+@app.route('/api/process-file', methods=['POST'])
 def process_file():
     try:
         if 'file' not in request.files:
@@ -746,6 +750,7 @@ def process_file():
         }), 500
 
 @app.route('/interest-analysis', methods=['POST'])
+@app.route('/api/interest-analysis', methods=['POST'])
 def interest_analysis():
     """
     Endpoint specifically for interest cost analysis
