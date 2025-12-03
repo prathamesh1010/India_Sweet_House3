@@ -5,7 +5,8 @@
       "src": "api/index.py",
       "use": "@vercel/python",
       "config": {
-        "maxLambdaSize": "50mb"
+        "maxLambdaSize": "50mb",
+        "runtime": "python3.13"
       }
     },
     {
@@ -30,5 +31,9 @@
   "framework": "vite",
   "installCommand": "npm install",
   "buildCommand": "npm run build",
-  "devCommand": "npm run dev:frontend"
+  "devCommand": "npm run dev:frontend",
+  "regions": ["iad1"],
+  "env": {
+    "PYTHONUNBUFFERED": "1"
+  }
 }
