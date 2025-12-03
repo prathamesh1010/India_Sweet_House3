@@ -807,6 +807,9 @@ def interest_analysis():
 # Vercel serverless function handler
 app.debug = False
 
+# Export handler for Vercel
+handler = app
+
 if __name__ == '__main__':
     # Local development
     print("Starting Financial Data Processing API...")
