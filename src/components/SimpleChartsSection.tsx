@@ -256,7 +256,7 @@ export const SimpleChartsSection: React.FC<SimpleChartsSectionProps> = memo(({ d
         // Keep original PBT value in rawPbt, but hide PBT when user selected a specific outlet
         const rawPbt = sheetData.reduce((sum, item) => sum + (parseFloat(item['PBT']) || 0), 0);
         pbt = isOutletView ? 0 : rawPbt;
-        pbf = isOutletView ? 0 : rawPbt; // For overall view we'll expose this as PBF
+        pbf = isOutletView ? 0 : rawPbt; // For overall view we'll expose this as PBT
         wastage = sheetData.reduce((sum, item) => sum + (parseFloat(item['WASTAGE']) || 0), 0);
       } else {
         // For transaction data, use the original logic
@@ -474,7 +474,7 @@ export const SimpleChartsSection: React.FC<SimpleChartsSectionProps> = memo(({ d
         { name: 'After COGS', value: 0, fill: '#f59e0b', percentage: 0 },
         { name: 'After Expenses', value: 0, fill: '#ef4444', percentage: 0 },
         { name: 'EBITDA', value: 0, fill: '#8b5cf6', percentage: 0 },
-        { name: 'PBF', value: 0, fill: 'hsl(220, 70%, 30%)', percentage: 0 }
+        { name: 'PBT', value: 0, fill: 'hsl(220, 70%, 30%)', percentage: 0 }
       ];
     }
 
@@ -515,12 +515,19 @@ export const SimpleChartsSection: React.FC<SimpleChartsSectionProps> = memo(({ d
         percentage: totalRevenue > 0 ? (afterExpenses / totalRevenue) * 100 : 0,
         width: totalRevenue > 0 ? (afterExpenses / totalRevenue) * 100 : 0
       },
+      { 
+        name: 'EBITDA', 
+        value: ebitda, 
+        fill: '#8b5cf6', 
+        percentage: totalRevenue > 0 ? (ebitda / totalRevenue) * 100 : 0,
+        width: totalRevenue > 0 ? (ebitda / totalRevenue) * 100 : 0
+      },
     ];
 
-    // For overall view include PBF as the final funnel metric; for individual-outlet view hide PBT/PBF
+    // For overall view include PBT as the final funnel metric; for individual-outlet view hide PBT
     if (!isOutletView) {
       result.push({
-        name: 'PBF',
+        name: 'PBT',
         value: pbf,
         fill: 'hsl(220, 70%, 30%)',
         percentage: totalRevenue > 0 ? (pbf / totalRevenue) * 100 : 0,
@@ -531,8 +538,7 @@ export const SimpleChartsSection: React.FC<SimpleChartsSectionProps> = memo(({ d
     console.log('SimpleChartsSection: Funnel data:', result);
     console.log('SimpleChartsSection: Total data:', totalData);
     return result;
-    return result;
-  }, [comparisonData]);
+  }, [comparisonData, isOutletView]);
 
   // Cost Structure data - grouped by file
   const monthlyCostStructureData = useMemo(() => {
@@ -953,17 +959,17 @@ export const SimpleChartsSection: React.FC<SimpleChartsSectionProps> = memo(({ d
                             className="relative rounded-lg shadow-sm border-2 border-white/20 transition-all duration-300 hover:shadow-md"
                             style={{
                               width: `${Math.max(item.width, 10)}%`,
-                              height: '40px',
+                              height: '50px',
                               backgroundColor: item.fill,
-                              minWidth: '200px'
+                              minWidth: '250px'
                             }}
                           >
-                            <div className="absolute inset-0 flex items-center justify-between px-4 text-white font-medium">
-                              <span className="text-sm truncate">{item.name}</span>
-                              <span className="text-sm font-bold">₹{Math.round(item.value).toLocaleString()}</span>
-                            </div>
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <span className="text-xs text-white/80 font-medium">{item.percentage.toFixed(1)}%</span>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-white">
+                              <div className="flex items-center justify-between w-full">
+                                <span className="text-sm font-semibold truncate">{item.name}</span>
+                                <span className="text-xs font-medium ml-2">{item.percentage.toFixed(1)}%</span>
+                              </div>
+                              <span className="text-sm font-bold mt-0.5">₹{Math.round(item.value).toLocaleString()}</span>
                             </div>
                           </div>
                         </div>
@@ -1029,7 +1035,7 @@ export const SimpleChartsSection: React.FC<SimpleChartsSectionProps> = memo(({ d
                           { key: 'cogs', name: 'COGS' },
                           { key: 'outletExpenses', name: 'Outlet Expenses' },
                           { key: 'ebitda', name: 'EBITDA' },
-                          ...(isOutletView ? [] : [{ key: 'pbf', name: 'PBF' }]),
+                          ...(isOutletView ? [] : [{ key: 'pbf', name: 'PBT' }]),
                           { key: 'wastage', name: 'Wastage' }
                         ];
                         
@@ -1059,7 +1065,7 @@ export const SimpleChartsSection: React.FC<SimpleChartsSectionProps> = memo(({ d
                       <Bar dataKey="cogs" fill="hsl(25, 95%, 53%)" radius={[4, 4, 0, 0]} name="COGS" />
                       <Bar dataKey="outletExpenses" fill="hsl(0, 84%, 60%)" radius={[4, 4, 0, 0]} name="Outlet Expenses" />
                       <Bar dataKey="ebitda" fill="hsl(280, 70%, 50%)" radius={[4, 4, 0, 0]} name="EBITDA" />
-                      {!isOutletView && <Bar dataKey="pbf" fill="hsl(142, 76%, 36%)" radius={[4, 4, 0, 0]} name="PBF" />}
+                      {!isOutletView && <Bar dataKey="pbf" fill="hsl(142, 76%, 36%)" radius={[4, 4, 0, 0]} name="PBT" />}
                       <Bar dataKey="wastage" fill="hsl(0, 84%, 60%)" radius={[4, 4, 0, 0]} name="Wastage" />
                       <Legend 
                         content={({ payload }) => {
@@ -1070,7 +1076,7 @@ export const SimpleChartsSection: React.FC<SimpleChartsSectionProps> = memo(({ d
                             { key: 'cogs', name: 'COGS', color: 'hsl(25, 95%, 53%)' },
                             { key: 'outletExpenses', name: 'Outlet Expenses', color: 'hsl(0, 84%, 60%)' },
                             { key: 'ebitda', name: 'EBITDA', color: 'hsl(280, 70%, 50%)' },
-                            ...(isOutletView ? [] : [{ key: 'pbf', name: 'PBF', color: 'hsl(142, 76%, 36%)' }]),
+                            ...(isOutletView ? [] : [{ key: 'pbf', name: 'PBT', color: 'hsl(142, 76%, 36%)' }]),
                             { key: 'wastage', name: 'Wastage', color: 'hsl(0, 84%, 60%)' }
                           ];
                           
@@ -1319,8 +1325,8 @@ export const SimpleChartsSection: React.FC<SimpleChartsSectionProps> = memo(({ d
                 cogs: sheet.cogs,
                 expenses: sheet.outletExpenses,
                 ebitda: sheet.ebitda,
-                pbt: sheet.pbt,
-                margin: sheet.totalRevenue > 0 ? ((sheet.pbt / sheet.totalRevenue) * 100) : 0
+                ...(isOutletView ? {} : { pbt: sheet.pbt }),
+                margin: sheet.totalRevenue > 0 ? ((sheet.ebitda / sheet.totalRevenue) * 100) : 0
               }))} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis 
@@ -1354,7 +1360,7 @@ export const SimpleChartsSection: React.FC<SimpleChartsSectionProps> = memo(({ d
                           { key: 'cogs', name: 'COGS', type: 'bar' },
                           { key: 'expenses', name: 'Outlet Expenses', type: 'bar' },
                           { key: 'ebitda', name: 'EBITDA', type: 'bar' },
-                          { key: 'pbt', name: 'PBT', type: 'bar' },
+                          ...(isOutletView ? [] : [{ key: 'pbt', name: 'PBT', type: 'bar' }]),
                           { key: 'margin', name: 'Profit Margin %', type: 'line' }
                         ];
                         
@@ -1394,7 +1400,7 @@ export const SimpleChartsSection: React.FC<SimpleChartsSectionProps> = memo(({ d
                       { key: 'cogs', name: 'COGS', color: 'hsl(25, 95%, 53%)', type: 'bar' },
                       { key: 'expenses', name: 'Outlet Expenses', color: 'hsl(0, 84%, 60%)', type: 'bar' },
                       { key: 'ebitda', name: 'EBITDA', color: 'hsl(280, 70%, 50%)', type: 'bar' },
-                      { key: 'pbt', name: 'PBT', color: 'hsl(142, 76%, 36%)', type: 'bar' },
+                      ...(isOutletView ? [] : [{ key: 'pbt', name: 'PBT', color: 'hsl(142, 76%, 36%)', type: 'bar' }]),
                       { key: 'margin', name: 'Profit Margin %', color: 'hsl(45, 93%, 47%)', type: 'line' }
                     ];
                     
@@ -1420,7 +1426,7 @@ export const SimpleChartsSection: React.FC<SimpleChartsSectionProps> = memo(({ d
                 <Bar yAxisId="left" dataKey="cogs" fill="hsl(25, 95%, 53%)" name="COGS" />
                 <Bar yAxisId="left" dataKey="expenses" fill="hsl(0, 84%, 60%)" name="Outlet Expenses" />
                 <Bar yAxisId="left" dataKey="ebitda" fill="hsl(280, 70%, 50%)" name="EBITDA" />
-                <Bar yAxisId="left" dataKey="pbt" fill="hsl(142, 76%, 36%)" name="PBT" />
+                {!isOutletView && <Bar yAxisId="left" dataKey="pbt" fill="hsl(142, 76%, 36%)" name="PBT" />}
                 <Line yAxisId="right" type="monotone" dataKey="margin" stroke="hsl(45, 93%, 47%)" strokeWidth={3} name="Profit Margin %" />
                 </ComposedChart>
             </ResponsiveContainer>
