@@ -712,7 +712,6 @@ export const SimpleChartsSection: React.FC<SimpleChartsSectionProps> = memo(({ d
       clusterManager: 'all',
       month: 'all',
       file: 'all',
-      interestType: 'all',
       category: 'all'
     });
   };
@@ -894,7 +893,7 @@ export const SimpleChartsSection: React.FC<SimpleChartsSectionProps> = memo(({ d
           
                       {!isOutletView && sheet.pbf !== undefined && (
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-muted-foreground">PBF</span>
+                          <span className="text-sm text-muted-foreground">PBT</span>
                           <div className="flex items-center gap-2">
                             <span className="font-semibold">₹{Math.round(sheet.pbf).toLocaleString()}</span>
                           </div>
@@ -1717,7 +1716,7 @@ export const SimpleChartsSection: React.FC<SimpleChartsSectionProps> = memo(({ d
                   <Legend />
                   <Bar 
                     dataKey="revenue" 
-                    fill={(entry: any) => entry.type === 'Top' ? 'hsl(142, 76%, 36%)' : 'hsl(0, 84%, 60%)'}
+                    fill="hsl(142, 76%, 36%)"
                     radius={[4, 4, 0, 0]}
                     name="Outlet Revenue"
                   />
