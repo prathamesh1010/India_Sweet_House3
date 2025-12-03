@@ -820,9 +820,8 @@ def interest_analysis():
 # Vercel serverless function handler
 app.debug = False
 
-# Vercel-specific: Handle path with /api prefix stripped
-# When client calls /api/process-file, Vercel rewrites to /api and passes /process-file
-# Flask routes above handle /process-file correctly
+# For Vercel: Export app at module level (Vercel will handle WSGI)
+# The app object is automatically used by Vercel's Python runtime
 
 if __name__ == '__main__':
     # Local development
