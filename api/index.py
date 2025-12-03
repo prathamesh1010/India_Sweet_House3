@@ -675,7 +675,20 @@ def parseFloat(value):
     except:
         return 0.0
 
+# Root and health check endpoint
 @app.route('/', methods=['GET'])
+def root():
+    return jsonify({
+        "status": "healthy", 
+        "message": "India Sweet House Analytics API",
+        "version": "1.0",
+        "endpoints": {
+            "health": "/api/health",
+            "process": "/api/process-file",
+            "interest": "/api/interest-analysis"
+        }
+    })
+
 @app.route('/health', methods=['GET'])
 def health_check():
     return jsonify({"status": "healthy", "message": "Backend API is running"})
@@ -807,8 +820,9 @@ def interest_analysis():
 # Vercel serverless function handler
 app.debug = False
 
-# Export handler for Vercel
-handler = app
+# Vercel-specific: Handle path with /api prefix stripped
+# When client calls /api/process-file, Vercel rewrites to /api and passes /process-file
+# Flask routes above handle /process-file correctly
 
 if __name__ == '__main__':
     # Local development
